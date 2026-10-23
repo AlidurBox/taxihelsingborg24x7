@@ -368,12 +368,12 @@ export function companyToCustomer(c: CompanyRequest): Mail {
       preheader: `Tack ${first}! Vi återkommer med ett förslag på avtal.`,
       badge: 'Förfrågan mottagen',
       title: `Tack ${esc(first)}, vi hör av oss!`,
-      intro: `Vi har tagit emot förfrågan om företagsavtal för <strong style="color:${C.text};">${esc(c.company)}</strong> och återkommer med ett förslag så snart vi kan.`,
+      intro: `Vi har tagit emot er förfrågan för <strong style="color:${C.text};">${esc(c.company)}</strong> och återkommer med ett förslag.`,
       body:
         section(
-          'Det här ingår för avtalskunder',
+          'Det här ingår',
           `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-            ${['Förmånliga avtalspriser', 'En samlad faktura per månad', 'Tydlig översikt över alla resor', 'Prioriterad service dygnet runt']
+            ${['Förmånliga avtalspriser', 'En samlad faktura per månad', 'Prioriterad service dygnet runt']
               .map(
                 (t) => `<tr><td style="padding:8px 0;font-family:${FONT};font-size:16px;color:${C.text};">
                   <span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:${C.yellow};color:${C.ink};font-size:13px;font-weight:800;margin-right:10px;">&#10003;</span>${t}
@@ -386,12 +386,10 @@ export function companyToCustomer(c: CompanyRequest): Mail {
           'Era uppgifter',
           detailsTable([
             ['Företag', esc(c.company)],
-            ['Org.nummer', c.orgNumber ? esc(c.orgNumber) : undefined],
             ['Kontaktperson', esc(c.name)],
-            ['Telefon', esc(c.phone)],
           ]),
         ) +
-        note(`Frågor redan nu? Ring oss på <a href="${SITE.phoneHref}" style="color:${C.ink};font-weight:700;">${PHONE}</a> eller svara på det här mejlet.`),
+        note(`Frågor? Ring <a href="${SITE.phoneHref}" style="color:${C.ink};font-weight:700;">${PHONE}</a> eller svara på mejlet.`),
     }),
   };
 }
