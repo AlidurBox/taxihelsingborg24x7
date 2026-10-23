@@ -315,19 +315,18 @@ export function bookingToCustomer(b: Booking): Mail {
       preheader: `Tack ${first}! Vi bekräftar din resa till ${b.to} så snart vi kan.`,
       badge: 'Bokning mottagen',
       title: `Tack för din bokning, ${esc(first)}!`,
-      intro: 'Vi har tagit emot din bokning och hör av oss så snart vi kan för att bekräfta resan. Här är en sammanfattning:',
+      intro: 'Vi hör av oss så snart vi kan för att bekräfta resan.',
       body:
         tripCard(b, price) +
         section(
           'Dina uppgifter',
           detailsTable([
-            ['Namn', esc(b.name)],
             ['Telefon', esc(b.phone)],
             ['Antal personer', esc(b.passengers)],
             ['Meddelande', b.message ? nl2br(b.message) : undefined],
           ]),
         ) +
-        note(`<strong>Behöver du ändra något eller har det bråttom?</strong><br>Ring oss på <a href="${SITE.phoneHref}" style="color:${C.ink};font-weight:700;">${PHONE}</a>, vi svarar dygnet runt. Du kan också svara direkt på det här mejlet.`) +
+        note('Bråttom eller vill ändra något? Ring oss dygnet runt eller svara på mejlet.') +
         `<div style="margin-top:28px;">${button(SITE.phoneHref, `Ring ${SITE.phone}`)}</div>`,
     }),
   };
