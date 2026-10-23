@@ -209,9 +209,41 @@ p { margin: 0 0 1em; }
   min-height: 48px; transition: border-color .15s;
 }
 .form textarea { resize: vertical; min-height: 90px; }
+.form select {
+  appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 42px;
+  background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c9c7c1' d='M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z'/%3E%3C/svg%3E") right 14px center / 20px no-repeat;
+}
 .form input:focus, .form select:focus, .form textarea:focus { outline: none; border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(246, 185, 30, .25); }
 .form input::-webkit-calendar-picker-indicator { filter: invert(1); }
 .was-validated :invalid { border-color: #ff6b6b; }
+
+/* Tidväljare (components/TimePicker.tsx) */
+.time-picker { position: relative; display: block; }
+.time-trigger {
+  width: 100%; min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font: inherit; font-size: 1rem; color: #fff; text-align: left; cursor: pointer;
+  background: var(--ink); border: 1px solid #3a3a3a; border-radius: 10px; padding: 12px 14px; transition: border-color .15s;
+}
+.time-trigger svg { width: 18px; height: 18px; fill: #c9c7c1; flex: none; }
+.time-placeholder { color: #9c9a94; }
+.time-trigger:focus-visible, .time-picker.open .time-trigger { outline: none; border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(246, 185, 30, .25); }
+.time-trigger.invalid, .was-validated .time-picker:has(.time-value:invalid) .time-trigger { border-color: #ff6b6b; }
+.time-picker .time-value { position: absolute; left: 0; bottom: 0; width: 1px; height: 1px; min-height: 0; padding: 0; border: 0; opacity: 0; pointer-events: none; }
+.time-pop {
+  position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; right: 0; min-width: 140px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 6px;
+  background: var(--ink-2); border: 1px solid #3a3a3a; border-radius: 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+}
+.time-col { position: relative; display: flex; flex-direction: column; gap: 2px; max-height: 248px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #3a3a3a transparent; }
+.time-head { position: sticky; top: 0; z-index: 1; padding: 4px 0 6px; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; text-align: center; color: #8d8a83; background: var(--ink-2); }
+.time-col button {
+  flex: none; height: 38px; font: inherit; font-size: .98rem; font-weight: 600; font-variant-numeric: tabular-nums;
+  color: #e9e7e1; background: none; border: 0; border-radius: 8px; cursor: pointer; transition: background .12s, color .12s;
+}
+.time-col button:hover:not(:disabled) { background: var(--ink-3); }
+.time-col button:focus-visible { outline: 2px solid var(--yellow); outline-offset: -2px; }
+.time-col button[aria-pressed="true"] { background: var(--yellow); color: var(--ink); }
+.time-col button:disabled { color: #555; cursor: default; }
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .row-3 { grid-template-columns: 1fr 1fr 1fr; }
 .hp { position: absolute; left: -9999px; }
@@ -225,7 +257,8 @@ p { margin: 0 0 1em; }
 .form-light { background: var(--paper); border-color: var(--line); box-shadow: var(--shadow); }
 .form-light label { color: var(--text); }
 .form-light .opt { color: var(--muted); }
-.form-light input, .form-light select, .form-light textarea { background: var(--paper-2); color: var(--text); border-color: var(--line); }
+.form-light input, .form-light select, .form-light textarea { background-color: var(--paper-2); color: var(--text); border-color: var(--line); }
+.form-light select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%235f5d58' d='M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z'/%3E%3C/svg%3E"); }
 .form-light .form-status.ok { color: #128a47; }
 .form-light .form-status.err { color: #c0392b; }
 .checklist-dark li { color: var(--text); }

@@ -3,17 +3,22 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import MailForm, { Field } from './MailForm';
+import TimePicker from './TimePicker';
 
 const localDate = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const localTime = (d: Date) => `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 
 export default function BookingForm() {
   const [to, setTo] = useState('');
   const [today, setToday] = useState('');
+  const [date, setDate] = useState('');
   const fromRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setToday(localDate(new Date()));
+    const now = localDate(new Date());
+    setToday(now);
+    setDate(now);
     const till = new URLSearchParams(window.location.search).get('till');
     if (till) {
       setTo(till);
@@ -46,10 +51,10 @@ export default function BookingForm() {
       </div>
       <div className="row row-3">
         <Field label="Datum">
-          <input name="Datum" type="date" required min={today || undefined} defaultValue={today} key={today} />
+          <input name="Datum" type="date" required min={today || undefined} value={date} onChange={(e) => setDate(e.target.value)} />
         </Field>
         <Field label="Tid">
-          <input name="Tid" type="time" required />
+          <TimePicker name="Tid" required min={date && date === today ? localTime(new Date()) : undefined} />
         </Field>
         <Field label="Antal personer">
           <select name="Antal personer" defaultValue="1">

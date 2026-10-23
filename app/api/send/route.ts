@@ -12,11 +12,10 @@ import { SITE } from '@/lib/site';
 // Tar emot bokningar och företagsförfrågningar från formulären och skickar två mejl:
 // ett till taxibolaget (MAIL_TO) och en bekräftelse till kunden.
 //
-// Inställningar i .env.local (se .env.example): RESEND_API_KEY, MAIL_FROM, MAIL_TO och SITE_URL.
+// Inställningar i .env.local (se .env.example): RESEND_API_KEY, MAIL_FROM och MAIL_TO.
 
 const FROM = process.env.MAIL_FROM || 'Taxi Helsingborg 24x7 <onboarding@resend.dev>';
 const TO = process.env.MAIL_TO || SITE.formEmail;
-const BASE_URL = process.env.SITE_URL || SITE.url;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const str = (v: unknown, max = 500) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
@@ -57,8 +56,8 @@ export async function POST(request: Request) {
     if (!b.from || !b.to || !b.date || !b.time || !b.name || !b.phone) {
       return Response.json({ error: 'missing_fields' }, { status: 400 });
     }
-    owner = bookingToOwner(b, BASE_URL);
-    customer = bookingToCustomer(b, BASE_URL);
+    owner = bookingToOwner(b);
+    customer = bookingToCustomer(b);
   } else if (body.type === 'foretag') {
     const c: CompanyRequest = {
       company: str(data['Företag'], 200),
@@ -71,8 +70,8 @@ export async function POST(request: Request) {
     if (!c.company || !c.name || !c.phone) {
       return Response.json({ error: 'missing_fields' }, { status: 400 });
     }
-    owner = companyToOwner(c, BASE_URL);
-    customer = companyToCustomer(c, BASE_URL);
+    owner = companyToOwner(c);
+    customer = companyToCustomer(c);
   } else {
     return Response.json({ error: 'unknown_type' }, { status: 400 });
   }

@@ -3,7 +3,7 @@
 export const SITE = {
   name: 'Taxi Helsingborg 24x7',
   legalName: 'Taxi Helsingborg 24x7 AB',
-  url: 'https://taxihelsingborg24x7.se',
+  url: 'https://taxihelsingborg24x7.com',
   phone: '042-18 09 00',
   phoneHref: 'tel:+4642180900',
   whatsapp: 'https://wa.me/4642180900',

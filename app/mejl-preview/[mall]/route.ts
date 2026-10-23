@@ -25,13 +25,13 @@ const company = {
 };
 
 const MALLAR = {
-  'bokning-agare': (base: string) => bookingToOwner(booking, base),
-  'bokning-kund': (base: string) => bookingToCustomer(booking, base),
-  'foretag-agare': (base: string) => companyToOwner(company, base),
-  'foretag-kund': (base: string) => companyToCustomer(company, base),
+  'bokning-agare': () => bookingToOwner(booking),
+  'bokning-kund': () => bookingToCustomer(booking),
+  'foretag-agare': () => companyToOwner(company),
+  'foretag-kund': () => companyToCustomer(company),
 };
 
-export async function GET(request: Request, { params }: { params: Promise<{ mall: string }> }) {
+export async function GET(_request: Request, { params }: { params: Promise<{ mall: string }> }) {
   if (process.env.NODE_ENV === 'production') return new Response('Not found', { status: 404 });
 
   const { mall } = await params;
@@ -41,7 +41,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ mall
     return new Response(`<ul style="font-family:sans-serif">${links}</ul>`, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
   }
 
-  const { subject, html } = render(new URL(request.url).origin);
+  const { subject, html } = render();
   return new Response(html.replace('<title>', `<title>${subject} | `), {
     headers: { 'Content-Type': 'text/html; charset=utf-8' },
   });

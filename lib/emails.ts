@@ -31,8 +31,8 @@ const C = {
   yellow: '#f6b91e',
   paper: '#ffffff',
   bg: '#f2f0ea',
-  line: '#e6e3db',
-  muted: '#6b6963',
+  line: '#d9d5cb',
+  muted: '#46443f',
   text: '#1a1a1a',
 };
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
@@ -90,31 +90,31 @@ function detailsTable(items: [string, string | undefined][]) {
 // Resekort: Från/Till med datum och tid, i mörk stil.
 function tripCard(b: Booking, price?: number) {
   const priceRow = price
-    ? `<tr><td colspan="2" style="padding:18px 24px;border-top:1px solid #333333;font-family:${FONT};font-size:15px;color:#cfccc5;">
+    ? `<tr><td colspan="2" style="padding:18px 24px;border-top:1px solid #333333;font-family:${FONT};font-size:15px;color:#e9e7e1;">
          Fast pris <span style="float:right;font-size:22px;font-weight:800;color:${C.yellow};">${formatKr(price)} kr</span>
        </td></tr>`
     : '';
   return `
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.ink}" style="background:${C.ink};border-radius:14px;">
     <tr><td style="padding:22px 24px 6px;font-family:${FONT};">
-      <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8d8a83;">Från</div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#bdbab3;">Från</div>
       <div style="font-size:19px;font-weight:700;color:#ffffff;padding-top:4px;">${esc(b.from)}</div>
     </td></tr>
     <tr><td style="padding:2px 24px;font-family:${FONT};font-size:20px;line-height:20px;color:${C.yellow};">&#8595;</td></tr>
     <tr><td style="padding:6px 24px 20px;font-family:${FONT};">
-      <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8d8a83;">Till</div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#bdbab3;">Till</div>
       <div style="font-size:19px;font-weight:700;color:#ffffff;padding-top:4px;">${esc(b.to)}</div>
     </td></tr>
     <tr><td style="padding:0 24px 22px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td class="col" width="50%" valign="top" style="padding:14px 16px;background:#222222;border-radius:10px;font-family:${FONT};">
-            <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8d8a83;">Datum</div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#bdbab3;">Datum</div>
             <div style="font-size:16px;font-weight:700;color:#ffffff;padding-top:4px;">${esc(formatDate(b.date))}</div>
           </td>
           <td class="col-gap" width="12" style="width:12px;font-size:0;">&nbsp;</td>
           <td class="col" width="50%" valign="top" style="padding:14px 16px;background:#222222;border-radius:10px;font-family:${FONT};">
-            <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8d8a83;">Tid</div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#bdbab3;">Tid</div>
             <div style="font-size:16px;font-weight:700;color:${C.yellow};padding-top:4px;">kl. ${esc(b.time)}</div>
           </td>
         </tr>
@@ -124,13 +124,12 @@ function tripCard(b: Booking, price?: number) {
   </table>`;
 }
 
-function layout({ preheader, badge, title, intro, body, baseUrl }: {
+function layout({ preheader, badge, title, intro, body }: {
   preheader: string;
   badge: string;
   title: string;
   intro: string;
   body: string;
-  baseUrl: string;
 }) {
   return `<!doctype html>
 <html lang="sv">
@@ -165,7 +164,7 @@ function layout({ preheader, badge, title, intro, body, baseUrl }: {
     <tr><td align="center" style="padding:32px 12px;" class="outer">
       <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background:${C.paper};border-radius:18px;overflow:hidden;">
         <tr><td bgcolor="${C.ink}" style="background:${C.ink};padding:26px 32px;" class="px">
-          <a href="${SITE.url}" style="text-decoration:none;"><img src="${baseUrl}/assets/logo-mejl.png" width="132" alt="Taxi Helsingborg 24x7" style="display:block;width:132px;height:auto;border:0;color:${C.yellow};font-family:${FONT};font-size:22px;font-weight:900;"></a>
+          <a href="${SITE.url}" style="font-family:${FONT};font-size:22px;font-weight:900;color:#ffffff;text-decoration:none;">Taxi Helsingborg <span style="color:${C.yellow};">24x7</span></a>
         </td></tr>
         <tr><td bgcolor="${C.yellow}" style="background:${C.yellow};height:6px;line-height:6px;font-size:0;">&nbsp;</td></tr>
         <tr><td class="px" style="padding:36px 40px 8px;font-family:${FONT};">
@@ -176,11 +175,11 @@ function layout({ preheader, badge, title, intro, body, baseUrl }: {
         <tr><td class="px" style="padding:24px 40px 36px;font-family:${FONT};">
           ${body}
         </td></tr>
-        <tr><td bgcolor="${C.ink}" class="px" style="background:${C.ink};padding:28px 40px;font-family:${FONT};font-size:14px;line-height:1.7;color:#a9a7a1;">
+        <tr><td bgcolor="${C.ink}" class="px" style="background:${C.ink};padding:28px 40px;font-family:${FONT};font-size:14px;line-height:1.7;color:#d6d3cc;">
           <strong style="color:#ffffff;">${SITE.name}</strong><br>
           Taxi och flygtaxi i Helsingborg, dygnet runt.<br>
           <a href="${SITE.phoneHref}" style="color:${C.yellow};text-decoration:none;font-weight:700;">${PHONE}</a>
-          &nbsp;·&nbsp; <a href="mailto:${SITE.email}" style="color:#cfccc5;">${SITE.email}</a><br>
+          &nbsp;·&nbsp; <a href="mailto:${SITE.email}" style="color:#ffffff;">${SITE.email}</a><br>
           ${SITE.street}, ${SITE.postalCode} ${SITE.city}
         </td></tr>
       </table>
@@ -218,13 +217,12 @@ const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, '')}`;
 /* ---------- Mejl ---------- */
 
 // Till taxibolaget när någon bokar.
-export function bookingToOwner(b: Booking, baseUrl = SITE.url): Mail {
+export function bookingToOwner(b: Booking): Mail {
   const price = fixedPrice(b.to);
   const reply = `mailto:${encodeURIComponent(b.email)}?subject=${encodeURIComponent(`Din taxibokning ${formatDate(b.date)} kl. ${b.time}`)}`;
   return {
     subject: `Ny bokning: ${b.from} → ${b.to}, ${b.date} kl. ${b.time}`,
     html: layout({
-      baseUrl,
       preheader: `${b.name} vill åka ${formatDate(b.date)} kl. ${b.time} till ${b.to}.`,
       badge: 'Ny bokning',
       title: `${esc(b.name)} vill boka en resa`,
@@ -247,13 +245,12 @@ export function bookingToOwner(b: Booking, baseUrl = SITE.url): Mail {
 }
 
 // Bekräftelse till kunden när hen bokar.
-export function bookingToCustomer(b: Booking, baseUrl = SITE.url): Mail {
+export function bookingToCustomer(b: Booking): Mail {
   const price = fixedPrice(b.to);
   const first = b.name.trim().split(/\s+/)[0];
   return {
     subject: `Vi har tagit emot din bokning, ${formatDate(b.date)} kl. ${b.time}`,
     html: layout({
-      baseUrl,
       preheader: `Tack ${first}! Vi bekräftar din resa till ${b.to} så snart vi kan.`,
       badge: 'Bokning mottagen',
       title: `Tack för din bokning, ${esc(first)}!`,
@@ -276,12 +273,11 @@ export function bookingToCustomer(b: Booking, baseUrl = SITE.url): Mail {
 }
 
 // Till taxibolaget när ett företag vill bli avtalskund.
-export function companyToOwner(c: CompanyRequest, baseUrl = SITE.url): Mail {
+export function companyToOwner(c: CompanyRequest): Mail {
   const reply = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent(`Företagsavtal med ${SITE.name}`)}`;
   return {
     subject: `Ny företagsförfrågan: ${c.company}`,
     html: layout({
-      baseUrl,
       preheader: `${c.company} vill bli avtalskund. Kontakt: ${c.name}, ${c.phone}.`,
       badge: 'Företagsförfrågan',
       title: `${esc(c.company)} vill bli avtalskund`,
@@ -309,12 +305,11 @@ export function companyToOwner(c: CompanyRequest, baseUrl = SITE.url): Mail {
 }
 
 // Bekräftelse till företaget.
-export function companyToCustomer(c: CompanyRequest, baseUrl = SITE.url): Mail {
+export function companyToCustomer(c: CompanyRequest): Mail {
   const first = c.name.trim().split(/\s+/)[0];
   return {
     subject: `Tack för er förfrågan om företagsavtal, ${c.company}`,
     html: layout({
-      baseUrl,
       preheader: `Tack ${first}! Vi återkommer med ett förslag på avtal.`,
       badge: 'Förfrågan mottagen',
       title: `Tack ${esc(first)}, vi hör av oss!`,
