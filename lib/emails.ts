@@ -195,17 +195,27 @@ function layout({ preheader, badge, title, intro, body }: {
 /* ---------- Mörk layout för mejlen till taxibolaget ---------- */
 
 // Enkel svart ruta med ljusare grå sektioner och vit text, utan header och etikett.
+// Företagsförfrågningar får en gul ruta med svarta sektioner så att de syns direkt.
 const D = { card: '#111111', panel: '#2b2b2b', line: '#3f3f3f', label: '#c4c1ba', text: '#ffffff' };
 
-function ownerLayout({ preheader, title, intro, body }: { preheader: string; title: string; intro: string; body: string }) {
+function ownerLayout({ preheader, title, intro, body, yellow = false }: {
+  preheader: string;
+  title: string;
+  intro: string;
+  body: string;
+  yellow?: boolean;
+}) {
+  const card = yellow ? C.yellow : D.card;
+  const fg = yellow ? C.ink : D.text;
+  const muted = yellow ? C.ink : D.label;
   return `${docHead(title)}<body style="margin:0;padding:0;background:${C.bg};">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(preheader)}</div>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.bg}" style="background:${C.bg};">
     <tr><td align="center" style="padding:32px 12px;" class="outer">
-      <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="${D.card}" style="width:600px;max-width:600px;background:${D.card};border-radius:18px;">
+      <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="${card}" style="width:600px;max-width:600px;background:${card};border-radius:18px;">
         <tr><td class="px" style="padding:36px 36px 32px;font-family:${FONT};">
-          <h1 class="title" style="margin:0 0 6px;font-size:26px;line-height:1.25;font-weight:800;color:${D.text};">${title}</h1>
-          <p style="margin:0;font-size:15px;line-height:1.6;color:${D.label};">${intro}</p>
+          <h1 class="title" style="margin:0 0 6px;font-size:26px;line-height:1.25;font-weight:800;color:${fg};">${title}</h1>
+          <p style="margin:0;font-size:15px;line-height:1.6;color:${muted};">${intro}</p>
           ${body}
         </td></tr>
       </table>
@@ -216,7 +226,7 @@ function ownerLayout({ preheader, title, intro, body }: { preheader: string; tit
 }
 
 // En grå sektion med rubrik och rader (etikett + värde).
-function panel(heading: string, items: [string, string | undefined][]) {
+function panel(heading: string, items: [string, string | undefined][], bg = D.panel) {
   const rowsHtml = items
     .filter(([, v]) => v && v.trim())
     .map(
@@ -228,7 +238,7 @@ function panel(heading: string, items: [string, string | undefined][]) {
     )
     .join('');
   return `
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${D.panel}" style="margin-top:20px;background:${D.panel};border-radius:12px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${bg}" style="margin-top:20px;background:${bg};border-radius:12px;">
     <tr><td style="padding:16px 20px 6px;font-family:${FONT};font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${D.label};">${heading}</td></tr>
     <tr><td style="padding:0 20px 8px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${rowsHtml}</table>
@@ -332,18 +342,19 @@ export function companyToOwner(c: CompanyRequest): Mail {
       preheader: `${c.company} vill bli avtalskund. Kontakt: ${c.name}, ${c.phone}.`,
       title: `${esc(c.company)} vill bli avtalskund`,
       intro: 'En ny förfrågan om företagsavtal har kommit in via hemsidan.',
+      yellow: true,
       body:
         panel('Företag', [
           ['Företag', esc(c.company)],
           ['Org.nummer', c.orgNumber ? esc(c.orgNumber) : undefined],
-        ]) +
+        ], D.card) +
         panel('Kontaktperson', [
           ['Namn', esc(c.name)],
           ['Telefon', darkLink(telHref(c.phone), esc(c.phone))],
           ['E-post', darkLink(`mailto:${esc(c.email)}`, esc(c.email))],
           ['Meddelande', c.message ? nl2br(c.message) : undefined],
-        ]) +
-        twoButtons(button(telHref(c.phone), 'Ring kontaktpersonen'), button(reply, 'Svara via e-post', D.panel, D.text)),
+        ], D.card) +
+        twoButtons(button(telHref(c.phone), 'Ring kontaktpersonen', D.card, D.text), button(reply, 'Svara via e-post', D.text, C.ink)),
     }),
   };
 }
