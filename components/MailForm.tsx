@@ -19,7 +19,7 @@ type Props = {
   children: ReactNode;
 };
 
-type Status = { type: 'idle' | 'sending' | 'error' | 'invalid' } | { type: 'done'; name: string };
+type Status = { type: 'idle' | 'sending' | 'error' | 'invalid' } | { type: 'done'; name: string; confirmed: boolean };
 
 export function Field({ label, optional, children }: { label: string; optional?: boolean; children: ReactNode }) {
   return (
@@ -54,12 +54,17 @@ export default function MailForm({ id, subject, kind, submitLabel, autoresponse,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: kind === 'bokning' ? 'bokning' : 'foretag', data }),
       });
+      // confirmed: om bekräftelsemejlet till kunden faktiskt gick iväg.
+      let confirmed = true;
       if (res.status === 503) {
         await sendWithFormSubmit(data);
       } else if (!res.ok) {
         throw new Error(String(res.status));
+      } else {
+        const json = await res.json().catch(() => ({}));
+        confirmed = json.confirmation !== false;
       }
-      setStatus({ type: 'done', name: (data.Namn ?? '').split(' ')[0] });
+      setStatus({ type: 'done', name: (data.Namn ?? '').split(' ')[0], confirmed });
     } catch {
       setStatus({ type: 'error' });
     }
@@ -89,7 +94,9 @@ export default function MailForm({ id, subject, kind, submitLabel, autoresponse,
         <div className="form-done" role="status">
           <strong>Tack{status.name ? `, ${status.name}` : ''}!</strong>
           <p>
-            Vi har tagit emot din {kind} och skickat en bekräftelse till din e-post.
+            {status.confirmed
+              ? <>Vi har tagit emot din {kind} och skickat en bekräftelse till din e-post.</>
+              : <>Vi har tagit emot din {kind} och hör av oss så snart vi kan.</>}{' '}
             Brådskande? Ring <a href={SITE.phoneHref}>{SITE.phone}</a>.
           </p>
         </div>
