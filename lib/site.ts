@@ -9,8 +9,8 @@ export const SITE = {
   whatsapp: 'https://wa.me/4642180900',
   email: 'info@taxihelsingborg24x7.com',
   // Bokningar och förfrågningar från formulären skickas hit.
-  // Tillfälligt: Resend kan bara skicka till kontots egen adress tills en domän är verifierad.
-  formEmail: 'alidurhamidbox@gmail.com',
+  // Kräver verifierad domän i Resend, annars tar Resend bara emot mejl till kontots egen adress.
+  formEmail: 'taxi24x7hbg@gmail.com',
   street: 'Häradsgatan 3B',
   postalCode: '256 59',
   city: 'Helsingborg',
