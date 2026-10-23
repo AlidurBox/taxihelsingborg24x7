@@ -59,9 +59,7 @@ export function fixedPrice(destination: string) {
 
 /* ---------- Byggstenar ---------- */
 
-function button(href: string, label: string, dark = false) {
-  const bg = dark ? C.ink : C.yellow;
-  const fg = dark ? '#ffffff' : C.ink;
+function button(href: string, label: string, bg = C.yellow, fg = C.ink) {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="btn">
       <tr><td align="center" bgcolor="${bg}" style="border-radius:999px;">
@@ -124,13 +122,8 @@ function tripCard(b: Booking, price?: number) {
   </table>`;
 }
 
-function layout({ preheader, badge, title, intro, body }: {
-  preheader: string;
-  badge: string;
-  title: string;
-  intro: string;
-  body: string;
-}) {
+// Gemensam <head> med mobilanpassning för alla mejl.
+function docHead(title: string) {
   return `<!doctype html>
 <html lang="sv">
 <head>
@@ -158,7 +151,17 @@ function layout({ preheader, badge, title, intro, body }: {
   }
 </style>
 </head>
-<body style="margin:0;padding:0;background:${C.bg};">
+`;
+}
+
+function layout({ preheader, badge, title, intro, body }: {
+  preheader: string;
+  badge: string;
+  title: string;
+  intro: string;
+  body: string;
+}) {
+  return `${docHead(title)}<body style="margin:0;padding:0;background:${C.bg};">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(preheader)}</div>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.bg}" style="background:${C.bg};">
     <tr><td align="center" style="padding:32px 12px;" class="outer">
@@ -188,6 +191,52 @@ function layout({ preheader, badge, title, intro, body }: {
 </body>
 </html>`;
 }
+
+/* ---------- Mörk layout för mejlen till taxibolaget ---------- */
+
+// Enkel svart ruta med ljusare grå sektioner och vit text, utan header och etikett.
+const D = { card: '#111111', panel: '#2b2b2b', line: '#3f3f3f', label: '#c4c1ba', text: '#ffffff' };
+
+function ownerLayout({ preheader, title, intro, body }: { preheader: string; title: string; intro: string; body: string }) {
+  return `${docHead(title)}<body style="margin:0;padding:0;background:${C.bg};">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(preheader)}</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.bg}" style="background:${C.bg};">
+    <tr><td align="center" style="padding:32px 12px;" class="outer">
+      <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="${D.card}" style="width:600px;max-width:600px;background:${D.card};border-radius:18px;">
+        <tr><td class="px" style="padding:36px 36px 32px;font-family:${FONT};">
+          <h1 class="title" style="margin:0 0 6px;font-size:26px;line-height:1.25;font-weight:800;color:${D.text};">${title}</h1>
+          <p style="margin:0;font-size:15px;line-height:1.6;color:${D.label};">${intro}</p>
+          ${body}
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+// En grå sektion med rubrik och rader (etikett + värde).
+function panel(heading: string, items: [string, string | undefined][]) {
+  const rowsHtml = items
+    .filter(([, v]) => v && v.trim())
+    .map(
+      ([label, value], i) => `
+      <tr>
+        <td class="row-label" valign="top" style="padding:12px 0;${i ? `border-top:1px solid ${D.line};` : ''}width:36%;font-family:${FONT};font-size:13px;font-weight:600;color:${D.label};">${label}</td>
+        <td class="row-value" valign="top" style="padding:12px 0;${i ? `border-top:1px solid ${D.line};` : ''}font-family:${FONT};font-size:16px;font-weight:600;color:${D.text};">${value}</td>
+      </tr>`,
+    )
+    .join('');
+  return `
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${D.panel}" style="margin-top:20px;background:${D.panel};border-radius:12px;">
+    <tr><td style="padding:16px 20px 6px;font-family:${FONT};font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:${D.label};">${heading}</td></tr>
+    <tr><td style="padding:0 20px 8px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${rowsHtml}</table>
+    </td></tr>
+  </table>`;
+}
+
+const darkLink = (href: string, text: string) => `<a href="${href}" style="color:${D.text};">${text}</a>`;
 
 function twoButtons(a: string, b: string) {
   return `
@@ -222,24 +271,26 @@ export function bookingToOwner(b: Booking): Mail {
   const reply = `mailto:${encodeURIComponent(b.email)}?subject=${encodeURIComponent(`Din taxibokning ${formatDate(b.date)} kl. ${b.time}`)}`;
   return {
     subject: `Ny bokning: ${b.from} → ${b.to}, ${b.date} kl. ${b.time}`,
-    html: layout({
+    html: ownerLayout({
       preheader: `${b.name} vill åka ${formatDate(b.date)} kl. ${b.time} till ${b.to}.`,
-      badge: 'Ny bokning',
-      title: `${esc(b.name)} vill boka en resa`,
-      intro: 'En ny bokning har kommit in via hemsidan. Bekräfta resan med kunden så snart du kan.',
+      title: `Ny bokning från ${esc(b.name)}`,
+      intro: 'Bekräfta resan med kunden så snart du kan.',
       body:
-        tripCard(b, price) +
-        section(
-          'Kund',
-          detailsTable([
-            ['Namn', esc(b.name)],
-            ['Telefon', `<a href="${telHref(b.phone)}" style="color:${C.ink};font-weight:700;">${esc(b.phone)}</a>`],
-            ['E-post', `<a href="mailto:${esc(b.email)}" style="color:${C.ink};">${esc(b.email)}</a>`],
-            ['Antal personer', esc(b.passengers)],
-            ['Meddelande', b.message ? nl2br(b.message) : undefined],
-          ]),
-        ) +
-        twoButtons(button(telHref(b.phone), 'Ring kunden'), button(reply, 'Svara via e-post', true)),
+        panel('Resa', [
+          ['Från', esc(b.from)],
+          ['Till', esc(b.to)],
+          ['Datum', esc(formatDate(b.date))],
+          ['Tid', `kl. ${esc(b.time)}`],
+          ['Antal personer', esc(b.passengers)],
+          ['Fast pris', price ? `${formatKr(price)} kr` : undefined],
+        ]) +
+        panel('Kund', [
+          ['Namn', esc(b.name)],
+          ['Telefon', darkLink(telHref(b.phone), esc(b.phone))],
+          ['E-post', darkLink(`mailto:${esc(b.email)}`, esc(b.email))],
+          ['Meddelande', b.message ? nl2br(b.message) : undefined],
+        ]) +
+        twoButtons(button(telHref(b.phone), 'Ring kunden'), button(reply, 'Svara via e-post', D.panel, D.text)),
     }),
   };
 }
@@ -277,29 +328,22 @@ export function companyToOwner(c: CompanyRequest): Mail {
   const reply = `mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent(`Företagsavtal med ${SITE.name}`)}`;
   return {
     subject: `Ny företagsförfrågan: ${c.company}`,
-    html: layout({
+    html: ownerLayout({
       preheader: `${c.company} vill bli avtalskund. Kontakt: ${c.name}, ${c.phone}.`,
-      badge: 'Företagsförfrågan',
       title: `${esc(c.company)} vill bli avtalskund`,
       intro: 'En ny förfrågan om företagsavtal har kommit in via hemsidan.',
       body:
-        section(
-          'Företag',
-          detailsTable([
-            ['Företag', `<strong>${esc(c.company)}</strong>`],
-            ['Org.nummer', c.orgNumber ? esc(c.orgNumber) : undefined],
-          ]),
-        ) +
-        section(
-          'Kontaktperson',
-          detailsTable([
-            ['Namn', esc(c.name)],
-            ['Telefon', `<a href="${telHref(c.phone)}" style="color:${C.ink};font-weight:700;">${esc(c.phone)}</a>`],
-            ['E-post', `<a href="mailto:${esc(c.email)}" style="color:${C.ink};">${esc(c.email)}</a>`],
-            ['Meddelande', c.message ? nl2br(c.message) : undefined],
-          ]),
-        ) +
-        twoButtons(button(telHref(c.phone), 'Ring kontaktpersonen'), button(reply, 'Svara via e-post', true)),
+        panel('Företag', [
+          ['Företag', esc(c.company)],
+          ['Org.nummer', c.orgNumber ? esc(c.orgNumber) : undefined],
+        ]) +
+        panel('Kontaktperson', [
+          ['Namn', esc(c.name)],
+          ['Telefon', darkLink(telHref(c.phone), esc(c.phone))],
+          ['E-post', darkLink(`mailto:${esc(c.email)}`, esc(c.email))],
+          ['Meddelande', c.message ? nl2br(c.message) : undefined],
+        ]) +
+        twoButtons(button(telHref(c.phone), 'Ring kontaktpersonen'), button(reply, 'Svara via e-post', D.panel, D.text)),
     }),
   };
 }
