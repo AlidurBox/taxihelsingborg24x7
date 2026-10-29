@@ -5,15 +5,22 @@ import BookingSection from '@/components/BookingSection';
 import CompanyForm from '@/components/CompanyForm';
 import {
   AirportsSection,
+  BenefitsSection,
+  BookTaxiButton,
   CallButton,
   CtaBand,
+  GallerySection,
   PricesSection,
   ReviewsSection,
   ServicesSection,
   Stats,
+  StepsSection,
+  Title,
+  TrustBar,
+  VehiclesSection,
 } from '@/components/sections';
-import { CalendarIcon, WhatsAppIcon } from '@/components/icons';
-import { AIRPORTS, SITE, formatKr } from '@/lib/site';
+import { Icon, WhatsAppIcon } from '@/components/icons';
+import { AIRPORTS, PHOTOS, SITE, bookHref, formatKr } from '@/lib/site';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -51,27 +58,29 @@ export default function Home() {
 
       {/* HERO */}
       <section className="hero">
-        <div className="hero-visual" aria-hidden="true">
-          <div className="hero-panel" />
-          <div className="hero-speed"><span /><span /><span /></div>
-          <Image className="hero-car" src="/assets/bil-tonad.webp" alt="" width={407} height={424} priority />
-        </div>
+        <Image className="bg-photo" src={PHOTOS.hero.src} alt="" fill priority sizes="100vw" />
         <div className="wrap hero-inner">
           <div className="hero-text">
-            <h1>Taxi i Helsingborg<br /><span>dygnet runt.</span></h1>
-            <p className="lead">Ring så kommer vi, eller boka i förväg. Erfarna chaufförer och fasta priser, årets alla dagar.</p>
+            <p className="eyebrow"><span className="dot" />Öppet nu, dygnet runt</p>
+            <h1>Taxi i Helsingborg, <em>tryggt fram</em></h1>
+            <p className="lead">Fast pris innan du åker, erfarna lokalkända chaufförer och bilar för 1–8 personer. Boka online eller ring, vi kör alla dagar året om.</p>
             <div className="hero-cta">
+              <BookTaxiButton />
               <CallButton />
-              <BookButton className="btn btn-ghost btn-lg"><CalendarIcon />Boka resa</BookButton>
-              <a className="btn btn-ghost btn-whatsapp btn-lg" href={SITE.whatsapp} target="_blank" rel="noopener">
+              <a className="btn btn-glass btn-whatsapp btn-lg" href={SITE.whatsapp} target="_blank" rel="noopener">
                 <WhatsAppIcon />
-                Chatta på WhatsApp
+                WhatsApp
               </a>
             </div>
+            <p className="hero-van">
+              <Image className="hero-van-img" src={PHOTOS.van.src} alt="" width={64} height={44} />
+              <span>Fler än fyra? <Link href={bookHref(undefined, { storbil: true })}>Boka storbilstaxi för 5–8 personer</Link></span>
+            </p>
             <div className="hero-chips">
               <p>Flygtaxi, fast pris</p>
               {AIRPORTS.map((a) => (
                 <BookButton key={a.code} destination={a.dest} className="chip">
+                  <Icon name="plane" />
                   {a.short} <strong>{formatKr(a.price)} kr</strong>
                 </BookButton>
               ))}
@@ -80,58 +89,63 @@ export default function Home() {
         </div>
       </section>
 
-      {/* USP */}
-      <section className="usp" aria-label="Därför väljer kunder oss">
-        <div className="wrap usp-grid">
-          <div className="usp-item"><strong>Öppet 24/7</strong><span>Dag, natt och helg</span></div>
-          <div className="usp-item"><strong>Fasta priser</strong><span>Inga överraskningar</span></div>
-          <div className="usp-item"><strong>Swish, Klarna &amp; kort</strong><span>Betala som du vill</span></div>
-          <div className="usp-item"><strong>Sedan 2019</strong><span>Tusentals nöjda kunder</span></div>
-        </div>
-      </section>
-
+      <TrustBar />
+      <BenefitsSection />
+      <VehiclesSection />
+      <GallerySection />
       <AirportsSection />
-
-      {/* BOKA */}
+      <PricesSection featured alt />
+      <StepsSection />
       <BookingSection />
-
-      <PricesSection link />
-
       <ServicesSection />
 
       {/* FÖRETAG */}
-      <section className="section section-alt" id="foretag">
+      <section className="section" id="foretag">
         <div className="wrap book-grid">
           <div className="book-intro">
             <p className="kicker">Företag</p>
-            <h2>Bli avtalskund</h2>
+            <Title text="Bli" accent="avtalskund" />
             <p>Åker ditt företag taxi ofta? Med ett avtal får ni bättre priser och enklare administration.</p>
-            <ul className="checklist checklist-dark">
+            <ul className="checklist">
               <li>Förmånliga avtalspriser</li>
               <li>En samlad faktura per månad</li>
               <li>Tydlig översikt över alla resor</li>
               <li>Prioriterad service dygnet runt</li>
             </ul>
+            <p className="fine">Vill du hellre prata direkt? <a href={SITE.phoneHref}>Ring {SITE.phone}</a></p>
           </div>
           <CompanyForm />
         </div>
       </section>
 
       {/* OM OSS */}
-      <section className="section section-dark" id="om-oss">
+      <section className="section section-alt" id="om-oss">
         <div className="wrap about-grid">
+          <div className="about-photo">
+            <Image src={PHOTOS.city.src} alt={PHOTOS.city.alt} fill sizes="(max-width: 860px) 100vw, 560px" />
+          </div>
           <div>
             <p className="kicker">Om oss</p>
-            <h2>Lokalt taxibolag i Helsingborg</h2>
+            <Title text="Lokalt taxibolag i" accent="Helsingborg" />
             <p>Vi kör taxi och flygtaxi i Helsingborg, nordvästra Skåne och hela Öresundsregionen. Dygnet runt, årets alla dagar.</p>
             <p>Våra chaufförer är erfarna, punktliga och lokalkända. Sedan 2019 satsar vi på bränslesnåla fordon för en hållbar och bekväm resa.</p>
+            <Stats />
             <p className="more-link"><Link href="/om-oss">Läs mer om oss</Link></p>
           </div>
-          <Stats />
         </div>
       </section>
 
       <ReviewsSection />
+
+      <section className="section section-tight whatsapp-band">
+        <div className="wrap whatsapp-inner">
+          <p><strong>Hellre skriva?</strong> Chatta med oss på WhatsApp, så svarar vi så snart vi kan.</p>
+          <a className="btn btn-glass" href={SITE.whatsapp} target="_blank" rel="noopener">
+            <WhatsAppIcon />
+            Chatta på WhatsApp
+          </a>
+        </div>
+      </section>
 
       <CtaBand />
     </>

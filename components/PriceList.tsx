@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { POPULAR, PRICES, SITE, bookHref, formatKr } from '@/lib/site';
+import { POPULAR, PRICES, SITE, WEEKEND_SURCHARGE, bookHref, formatKr } from '@/lib/site';
 import { SearchIcon } from './icons';
 
 // Rubrik och sökfält till vänster, priskort till höger. Kortet har fast storlek
@@ -28,6 +28,7 @@ export default function PriceList({ children }: { children: React.ReactNode }) {
           <SearchIcon />
           <input type="search" placeholder="Sök ort, t.ex. Malmö" autoComplete="off" value={query} onChange={(e) => setQuery(e.target.value)} />
         </label>
+        <p className="fine">Lördag och söndag tillkommer {WEEKEND_SURCHARGE * 100} % helgtillägg.</p>
         <p className="fine">Saknas din ort? <a href={SITE.phoneHref}>Ring {SITE.phone}</a> så får du ett fast pris direkt.</p>
       </div>
 

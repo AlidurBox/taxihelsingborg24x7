@@ -1,7 +1,7 @@
 // HTML-mejl för bokningar och företagsförfrågningar.
 // Byggda med tabeller och inline-stilar så att de ser rätt ut i Gmail, Outlook och Apple Mail,
 // och med en media query som gör dem enkolumniga i mobil.
-import { AIRPORTS, PRICES, SITE, formatKr } from './site';
+import { AIRPORTS, PRICES, SITE, WEEKEND_SURCHARGE, formatKr, isWeekend, priceOn } from './site';
 
 export type Booking = {
   from: string;
@@ -57,6 +57,14 @@ export function fixedPrice(destination: string) {
   return PRICES.find(([name]) => name.toLowerCase() === d)?.[1];
 }
 
+// Fast pris för bokningen, med helgtillägg om resan är på lördag eller söndag.
+function bookingPrice(b: Booking) {
+  const base = fixedPrice(b.to);
+  return base === undefined ? undefined : priceOn(base, b.date);
+}
+
+const weekendLabel = `inkl. helgtillägg ${WEEKEND_SURCHARGE * 100} %`;
+
 /* ---------- Byggstenar ---------- */
 
 function button(href: string, label: string, bg = C.yellow, fg = C.ink) {
@@ -89,7 +97,7 @@ function detailsTable(items: [string, string | undefined][]) {
 function tripCard(b: Booking, price?: number) {
   const priceRow = price
     ? `<tr><td colspan="2" style="padding:18px 24px;border-top:1px solid #333333;font-family:${FONT};font-size:15px;color:#e9e7e1;">
-         Fast pris <span style="float:right;font-size:22px;font-weight:800;color:${C.yellow};">${formatKr(price)} kr</span>
+         Fast pris${isWeekend(b.date) ? ` <span style="font-size:13px;color:#bdbab3;">${weekendLabel}</span>` : ''} <span style="float:right;font-size:22px;font-weight:800;color:${C.yellow};">${formatKr(price)} kr</span>
        </td></tr>`
     : '';
   return `
@@ -277,7 +285,7 @@ const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, '')}`;
 
 // Till taxibolaget när någon bokar.
 export function bookingToOwner(b: Booking): Mail {
-  const price = fixedPrice(b.to);
+  const price = bookingPrice(b);
   const reply = `mailto:${encodeURIComponent(b.email)}?subject=${encodeURIComponent(`Din taxibokning ${formatDate(b.date)} kl. ${b.time}`)}`;
   return {
     subject: `Ny bokning: ${b.from} → ${b.to}, ${b.date} kl. ${b.time}`,
@@ -292,7 +300,7 @@ export function bookingToOwner(b: Booking): Mail {
           ['Datum', esc(formatDate(b.date))],
           ['Tid', `kl. ${esc(b.time)}`],
           ['Antal personer', esc(b.passengers)],
-          ['Fast pris', price ? `${formatKr(price)} kr` : undefined],
+          ['Fast pris', price ? `${formatKr(price)} kr${isWeekend(b.date) ? ` (${weekendLabel})` : ''}` : undefined],
         ]) +
         panel('Kund', [
           ['Namn', esc(b.name)],
@@ -307,7 +315,7 @@ export function bookingToOwner(b: Booking): Mail {
 
 // Bekräftelse till kunden när hen bokar.
 export function bookingToCustomer(b: Booking): Mail {
-  const price = fixedPrice(b.to);
+  const price = bookingPrice(b);
   const first = b.name.trim().split(/\s+/)[0];
   return {
     subject: `Vi har tagit emot din bokning, ${formatDate(b.date)} kl. ${b.time}`,

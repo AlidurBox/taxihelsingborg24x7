@@ -45,3 +45,35 @@ export function CalendarIcon() {
     </svg>
   );
 }
+
+// Linjeikoner för fördelar, tjänster och fordon. Ritas med currentColor.
+const LINE_ICONS = {
+  clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3.2 2" /></>,
+  tag: <><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z" /><circle cx="7.5" cy="7.5" r="1.5" /></>,
+  shield: <><path d="M12 3 4 6v6c0 5 3.4 8.3 8 9 4.6-.7 8-4 8-9V6z" /><path d="m9 12 2 2 4-4" /></>,
+  card: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18M7 15h4" /></>,
+  users: <><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8" /></>,
+  user: <><circle cx="12" cy="8" r="4" /><path d="M4.5 21a7.5 7.5 0 0 1 15 0" /></>,
+  luggage: <><rect x="6" y="7" width="12" height="13" rx="2" /><path d="M9 7V4h6v3M10 11v5M14 11v5M8 20v1.5M16 20v1.5" /></>,
+  plane: <path d="M12 2.5c.8 0 1.5.7 1.5 1.5v5.5l7.5 4.5v2l-7.5-2.3v4.8l2.3 1.7V22L12 21l-3.8 1v-1.8l2.3-1.7v-4.8L3 16v-2l7.5-4.5V4c0-.8.7-1.5 1.5-1.5z" />,
+  briefcase: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18" /></>,
+  pin: <><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></>,
+  road: <path d="M5 21 9 3M19 21 15 3M12 5v2.5M12 11v2.5M12 17v2.5" />,
+  star: <path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6L12 16.7l-5.4 2.9 1.1-6-4.5-4.2 6.1-.8z" />,
+  box: <><path d="M20 7.5 12 3.5l-8 4v9l8 4 8-4z" /><path d="m4 7.5 8 4 8-4M12 11.5v9" /></>,
+  wheel: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="2.2" /><path d="M3.3 10.5c2.8-.8 5.8-.8 8.7 0s5.9.8 8.7 0M10.6 13.8 8 20.6M13.4 13.8l2.6 6.8" /></>,
+  arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
+  check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
+  phone: <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" />,
+  calendar: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4M16 3v4M3 10h18M8.5 15l2.5 2.5 4.5-4.5" /></>,
+};
+
+export type IconName = keyof typeof LINE_ICONS;
+
+export function Icon({ name, className = 'ico' }: { name: IconName; className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      {LINE_ICONS[name]}
+    </svg>
+  );
+}

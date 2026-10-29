@@ -6,11 +6,10 @@ export default function CompanyForm() {
   return (
     <MailForm
       id="company-form"
-      subject="Förfrågan om företagsavtal: Taxi Helsingborg 24x7"
+      subject="Förfrågan om företagsavtal: 24x7Taxi Helsingborg"
       kind="förfrågan"
       submitLabel="Skicka förfrågan"
-      autoresponse="Tack för din förfrågan om företagsavtal hos Taxi Helsingborg 24x7! Vi återkommer till dig så snart vi kan. Frågor? Ring oss på 042-18 09 00."
-      light
+      autoresponse="Tack för din förfrågan om företagsavtal hos 24x7Taxi Helsingborg! Vi återkommer till dig så snart vi kan. Frågor? Ring oss på 042-18 09 00."
     >
       <input type="hidden" name="Typ" value="Företagsavtal" />
       <div className="row">

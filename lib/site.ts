@@ -1,8 +1,8 @@
 // All företagsinformation på ett ställe. Ändra här så uppdateras hela sidan.
 
 export const SITE = {
-  name: 'Taxi Helsingborg 24x7',
-  legalName: 'Taxi Helsingborg 24x7 AB',
+  name: '24x7Taxi Helsingborg',
+  legalName: '24x7Taxi Helsingborg',
   url: 'https://taxihelsingborg24x7.com',
   phone: '042-18 09 00',
   phoneHref: 'tel:+4642180900',
@@ -21,25 +21,38 @@ export const SITE = {
 };
 
 export const AIRPORTS = [
-  { code: 'CPH', name: 'Köpenhamn Kastrup', short: 'Kastrup', price: 1895, dest: 'Köpenhamn Kastrup Airport' },
+  { code: 'CPH', name: 'Köpenhamn Kastrup', short: 'Kastrup', price: 1945, dest: 'Köpenhamn Kastrup Airport' },
   { code: 'MMX', name: 'Malmö Sturup', short: 'Sturup', price: 1795, dest: 'Sturup Flygplats' },
   { code: 'AGH', name: 'Ängelholm Helsingborg', short: 'Ängelholm', price: 695, dest: 'Ängelholm Flygplats' },
 ];
 
 // Fasta priser från Helsingborg, personbil max 4 personer.
 export const PRICES: [string, number][] = [
-  ['Allerum', 400], ['Arild', 950], ['Billesholm', 675], ['Bjuv', 625], ['Bårslöv', 405],
+  ['Allerum', 415], ['Arild', 950], ['Billesholm', 675], ['Bjuv', 625], ['Bårslöv', 405],
   ['Båstad', 1450], ['Domsten', 450], ['Ekeby', 645], ['Eslöv', 1395], ['Förslöv', 1150],
   ['Gantofta', 425], ['Glumslöv', 495], ['Göteborg', 4350], ['Halmstad', 1850], ['Hasslarp', 655],
-  ['Hyllinge', 495], ['Hässleholm', 1550], ['Höganäs', 750], ['Jonstorp', 715], ['Jönköping', 3995],
-  ['Kastrup flygplats', 1895], ['Klippan', 750], ['Kristianstad', 1850], ['Kågeröd', 995],
-  ['Köpenhamn C', 2350], ['Landskrona', 750], ['Lerberget', 705], ['Lund', 1385], ['Malmö', 1495],
-  ['Markaryd', 1750], ['Munka Ljungby', 950], ['Mölle', 850], ['Perstorp', 1150], ['Påarp', 415],
+  ['Hittarp', 395], ['Hyllinge', 495], ['Hässleholm', 1745], ['Höganäs', 750], ['Jonstorp', 715], ['Jönköping', 3995],
+  ['Kastrup flygplats', 1945], ['Klippan', 750], ['Kristianstad', 1895], ['Kågeröd', 995],
+  ['Köpenhamn C', 2350], ['Landskrona', 750], ['Laröd', 315], ['Lerberget', 705], ['Lund', 1385], ['Malmö', 1535],
+  ['Markaryd', 1750], ['Munka Ljungby', 950], ['Mölle', 985], ['Perstorp', 1150], ['Påarp', 415],
   ['Rydebäck', 480], ['Stockholm', 13500], ['Sturup flygplats', 1795], ['Svalöv', 1200],
   ['Torekov', 1515], ['Ulared', 2950], ['Vallåkra', 645], ['Varberg', 2850], ['Viken', 645],
-  ['Väla', 325], ['Ystad', 2350], ['Åstorp', 625], ['Ängelholm', 750], ['Ängelholm flygplats', 695],
+  ['Väla', 365], ['Ystad', 2350], ['Åstorp', 625], ['Ängelholm', 750], ['Ängelholm flygplats', 695],
   ['Ödåkra', 395],
 ];
+
+// Helgtillägg: resor på lördag och söndag kostar 15 % mer än prislistan.
+export const WEEKEND_SURCHARGE = 0.15;
+
+// Datum som ÅÅÅÅ-MM-DD. Ogiltigt datum räknas som vardag.
+export const isWeekend = (iso: string) => {
+  const day = new Date(`${iso}T12:00:00Z`).getUTCDay();
+  return day === 0 || day === 6;
+};
+
+// Priset för resan ett visst datum, med helgtillägg på lördag och söndag. Hela kronor.
+export const priceOn = (price: number, iso: string) =>
+  isWeekend(iso) ? Math.round(price * (1 + WEEKEND_SURCHARGE)) : price;
 
 // Visas överst i prislistan.
 export const POPULAR = ['Malmö', 'Lund', 'Landskrona', 'Höganäs', 'Ängelholm'];
@@ -55,6 +68,42 @@ export const REVIEWS = [
 
 export const formatKr = (n: number) => n.toLocaleString('sv-SE').replace(/ /g, ' ');
 
-// Länk till bokningssidan, med resmålet förifyllt.
-export const bookHref = (destination?: string) =>
-  destination ? `/boka?till=${encodeURIComponent(destination)}` : '/boka';
+// Länk till bokningssidan, med resmålet förifyllt. storbil väljer "5-8 (storbil)" i formuläret.
+export const bookHref = (destination?: string, { storbil = false } = {}) => {
+  const params = new URLSearchParams();
+  if (destination) params.set('till', destination);
+  if (storbil) params.set('storbil', '1');
+  const query = params.toString();
+  return query ? `/boka?${query}` : '/boka';
+};
+
+// Foton från Wikimedia Commons. Licenserna kräver att fotografen anges, se sidfoten.
+// Byt gärna mot egna bilder på bilarna, ändra då bara src och ta bort credit.
+export const PHOTOS = {
+  hero: { src: '/assets/foto/helsingborg-natt.webp', alt: 'Helsingborg by night med Rådhuset och Öresund i bakgrunden', credit: ['Andrés Lindgren', 'CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Helsingborg_by_night,_2014-04-26.jpg'] },
+  flight: { src: '/assets/foto/oresund-flyg.webp', alt: 'Utsikt från flygplan över Öresundsbron och Kastrup', credit: ['Ank Kumar', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Oresund_Bridge_(Ank_Kumar,_INFOSYS_limited)_01.jpg'] },
+  karnan: { src: '/assets/foto/karnan-natt.webp', alt: 'Kärnan i Helsingborg upplyst en kväll', credit: ['Instdeadangel', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Helsingborg_k%C3%A4rnan_by_night.jpg'] },
+  city: { src: '/assets/foto/stortorget.webp', alt: 'Stortorget i Helsingborg med Kärnan', credit: ['News Oresund', 'CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Karnan_Helsingborg_20161025_750A9908_(30930508123).jpg'] },
+  molle: { src: '/assets/foto/molle.webp', alt: 'Mölle hamn en sommarkväll', credit: ['Peterappelros', 'CC BY 3.0', 'https://commons.wikimedia.org/wiki/File:M%C3%B6lle_hamn.JPG'] },
+  malmo: { src: '/assets/foto/malmo.webp', alt: 'Turning Torso i Malmö', credit: ['OleNeitzel', 'CC BY 4.0', 'https://commons.wikimedia.org/wiki/File:Turning_Torso_in_Malm%C3%B6,_Sweden,_near_%C3%96resund.jpg'] },
+  car: { src: '/assets/foto/bil-hamn.webp', alt: '24x7Taxi Helsingborgs svarta personbil vid hamnen i Helsingborg' },
+  // Egna bilder från företagets Google-profil.
+  fleet: { src: '/assets/foto/bilar-hamn.webp', alt: 'Storbilstaxi och personbil från 24x7Taxi Helsingborg vid hamnen i solnedgång' },
+  van: { src: '/assets/foto/storbil.webp', alt: 'Silverfärgad storbilstaxi från 24x7Taxi Helsingborg för upp till 8 personer' },
+} satisfies Record<string, { src: string; alt: string; credit?: [string, string, string] }>;
+
+// Bilder i galleriet på startsidan och på /bilder. Lägg bara till olika foton här,
+// inte beskärningar av ett foto som redan finns (van är ett urklipp ur fleet).
+export const GALLERY = [
+  { photo: PHOTOS.fleet, caption: 'Storbil och personbil, redo dygnet runt' },
+  { photo: PHOTOS.car, caption: 'Vid hamnen i Helsingborg' },
+];
+
+// Populära resmål med foto på startsidan. Priset hämtas ur PRICES.
+export const DESTINATIONS = [
+  { name: 'Kastrup flygplats', label: 'Köpenhamn Kastrup', photo: PHOTOS.flight },
+  { name: 'Malmö', label: 'Malmö', photo: PHOTOS.malmo },
+  { name: 'Mölle', label: 'Mölle', photo: PHOTOS.molle },
+];
+
+export const priceFor = (name: string) => PRICES.find(([n]) => n === name)?.[1];

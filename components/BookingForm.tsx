@@ -1,9 +1,13 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import MailForm, { Field } from './MailForm';
 import TimePicker from './TimePicker';
+import { PHOTOS, WEEKEND_SURCHARGE, isWeekend } from '@/lib/site';
+
+const VAN = '5-8 (storbil)';
 
 const localDate = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -13,13 +17,16 @@ export default function BookingForm() {
   const [to, setTo] = useState('');
   const [today, setToday] = useState('');
   const [date, setDate] = useState('');
+  const [passengers, setPassengers] = useState('1');
   const fromRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const now = localDate(new Date());
     setToday(now);
     setDate(now);
-    const till = new URLSearchParams(window.location.search).get('till');
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('storbil')) setPassengers(VAN);
+    const till = params.get('till');
     if (till) {
       setTo(till);
       fromRef.current?.focus({ preventScroll: true });
@@ -29,10 +36,10 @@ export default function BookingForm() {
   return (
     <MailForm
       id="booking-form"
-      subject="Ny bokning: Taxi Helsingborg 24x7"
+      subject="Ny bokning: 24x7Taxi Helsingborg"
       kind="bokning"
       submitLabel="Skicka bokning"
-      autoresponse="Tack för din bokning hos Taxi Helsingborg 24x7! Vi har tagit emot din förfrågan och bekräftar resan så snart vi kan. Bråttom? Ring oss på 042-18 09 00."
+      autoresponse="Tack för din bokning hos 24x7Taxi Helsingborg! Vi har tagit emot din förfrågan och bekräftar resan så snart vi kan. Bråttom? Ring oss på 042-18 09 00."
       footer={
         <p className="form-note">
           Genom att skicka godkänner du att vi behandlar dina uppgifter för att hantera bokningen.{' '}
@@ -57,15 +64,24 @@ export default function BookingForm() {
           <TimePicker name="Tid" required min={date && date === today ? localTime(new Date()) : undefined} />
         </Field>
         <Field label="Antal personer">
-          <select name="Antal personer" defaultValue="1">
+          <select name="Antal personer" value={passengers} onChange={(e) => setPassengers(e.target.value)}>
             <option>1</option>
             <option>2</option>
             <option>3</option>
             <option>4</option>
-            <option>5-8 (storbil)</option>
+            <option>{VAN}</option>
           </select>
         </Field>
       </div>
+      {passengers === VAN && (
+        <p className="form-note form-note-van">
+          <Image src={PHOTOS.van.src} alt="" width={72} height={49} />
+          <span>Storbilstaxi för upp till 8 personer. Vi bekräftar priset när vi hör av oss.</span>
+        </p>
+      )}
+      {isWeekend(date) && (
+        <p className="form-note">Lördag och söndag tillkommer {WEEKEND_SURCHARGE * 100} % helgtillägg på det fasta priset.</p>
+      )}
       <div className="row row-pair">
         <Field label="Namn">
           <input name="Namn" type="text" required autoComplete="name" />

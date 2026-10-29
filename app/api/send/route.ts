@@ -14,7 +14,7 @@ import { SITE } from '@/lib/site';
 //
 // Inställningar i .env.local (se .env.example): RESEND_API_KEY, MAIL_FROM och MAIL_TO.
 
-const FROM = process.env.MAIL_FROM || 'Taxi Helsingborg 24x7 <onboarding@resend.dev>';
+const FROM = process.env.MAIL_FROM || '24x7Taxi Helsingborg <onboarding@resend.dev>';
 const TO = process.env.MAIL_TO || SITE.formEmail;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

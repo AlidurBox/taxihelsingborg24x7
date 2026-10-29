@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { AIRPORTS, SITE } from '@/lib/site';
+import { AIRPORTS, PHOTOS, SITE } from '@/lib/site';
 import { FacebookIcon, InstagramIcon, WhatsAppIcon } from './icons';
 
 export default function Footer() {
@@ -27,8 +27,10 @@ export default function Footer() {
         <div>
           <h3>Snabblänkar</h3>
           <ul>
-            <li><Link href="/boka">Boka resa</Link></li>
+            <li><Link href="/boka">Boka taxi</Link></li>
+            <li><Link href="/boka?storbil=1">Boka storbilstaxi</Link></li>
             <li><Link href="/priser">Priser</Link></li>
+            <li><Link href="/bilder">Bilder</Link></li>
             <li><Link href="/om-oss">Om oss</Link></li>
             <li><a href="/#foretag">Bli avtalskund</a></li>
             <li><Link href="/integritetspolicy">Integritetspolicy</Link></li>
@@ -47,6 +49,18 @@ export default function Footer() {
         <p>© {new Date().getFullYear()} {SITE.legalName}</p>
         <p className="pay">Swish · Klarna · Visa · Mastercard · American Express</p>
       </div>
+      <details className="wrap credits">
+        <summary>Bildkällor</summary>
+        <p>
+          Foton via Wikimedia Commons:{' '}
+          {Object.values(PHOTOS).flatMap((p) => ('credit' in p ? [p] : [])).map((p, i) => (
+            <span key={p.src}>
+              {i > 0 && ' · '}
+              <a href={p.credit[2]} target="_blank" rel="noopener">{p.alt}</a>, {p.credit[0]} ({p.credit[1]})
+            </span>
+          ))}
+        </p>
+      </details>
   </footer>
 );
 }
