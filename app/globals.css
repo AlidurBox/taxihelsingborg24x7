@@ -404,10 +404,6 @@ div > .form-note { margin-top: 16px; }
 .social svg { width: 20px; height: 20px; fill: currentColor; }
 .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; border-top: 1px solid var(--line); margin-top: 48px; padding-top: 22px; font-size: .85rem; }
 .footer-bottom p { margin: 0; }
-.credits { margin-top: 14px; font-size: .78rem; color: var(--muted-2); }
-.credits summary { cursor: pointer; width: max-content; }
-.credits p { margin: 8px 0 0; }
-.credits a { text-decoration: underline; }
 
 /* ---------- Galleri ---------- */
 .gallery-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; max-width: none; }

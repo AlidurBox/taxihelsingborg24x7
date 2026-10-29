@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { AIRPORTS, PHOTOS, SITE } from '@/lib/site';
+import { AIRPORTS, SITE } from '@/lib/site';
 import { FacebookIcon, InstagramIcon, WhatsAppIcon } from './icons';
 
 export default function Footer() {
@@ -49,18 +49,6 @@ export default function Footer() {
         <p>© {new Date().getFullYear()} {SITE.legalName}</p>
         <p className="pay">Swish · Klarna · Visa · Mastercard · American Express</p>
       </div>
-      <details className="wrap credits">
-        <summary>Bildkällor</summary>
-        <p>
-          Foton via Wikimedia Commons:{' '}
-          {Object.values(PHOTOS).flatMap((p) => ('credit' in p ? [p] : [])).map((p, i) => (
-            <span key={p.src}>
-              {i > 0 && ' · '}
-              <a href={p.credit[2]} target="_blank" rel="noopener">{p.alt}</a>, {p.credit[0]} ({p.credit[1]})
-            </span>
-          ))}
-        </p>
-      </details>
-  </footer>
-);
+    </footer>
+  );
 }
